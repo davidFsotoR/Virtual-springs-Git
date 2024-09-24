@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Virtual Sptrings</title>
+    <link rel="icon" href="assets/imgs/img_3.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="custom-nav navbar-expand-lg">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+        <ul class="custom-navbar">
+            <li class="custom-navbar-item">
+                <a href="Index.html" class=" hover-effect custom-navbar-link">
+                    <img class="custom-icon" src="Assets/imgs/img_10.png" width="23" height="23"> Volver al inicio
+                </a>
+            </li>
+        </ul>
+        <div class="custom-logo">
+            <img src="Assets/imgs/img_3.png" >
+        </div>
+        </div>
+    </nav>
+    <div class="custom-content2">
+        <div class="custom-text-container">
+            <h2 class="text-center">Reserva tu Parqueadero</h2>
+            <form id="reservaForm" action="procesar_reserva.php" method="POST">
+                <div class="form-group">
+                    <label for="vehiculo">Tipo de vehículo:</label>
+                    <select class="form-control" id="vehiculo" name="tipo_vehiculo" required>
+                        <option value="Carro">Carro</option>
+                        <option value="Moto">Moto</option>
+                        <option value="Camion">Camion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="placa">Placa del vehículo:</label>
+                    <input type="text" class="form-control" id="placa" name="placa" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_ingreso">Fecha y hora de ingreso:</label>
+                    <input type="datetime-local" class="form-control" id="fecha_ingreso" name="fecha_ingreso" required>
+                </div>
+    
+                <h4 class="text-center">Selecciona un espacio de parqueo:</h4>
+                <div class="parking-lot" id="parkingLot">
+                    <!-- Espacios generados dinámicamente -->
+                </div>
+    
+                <input type="hidden" id="espacioSeleccionado" name="espacioSeleccionado" required>
+                <div class="form-group text-center">
+                    <button type="submit" class="custom-button">Reservar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Datos de espacios ocupados para todas las secciones (A a E)
+        const ocupados = ['A1', 'A3', 'B2', 'C4', 'D5', 'E9',"A8","B10"]; // Espacios ocupados
+    
+        // Generar espacios de parqueo para secciones A a E
+        const secciones = ['A', 'B', 'C', 'D']; // Secciones desde A hasta E
+        const totalSpacesPerSection = 10; // Número de espacios por sección
+        const parkingLot = document.getElementById('parkingLot');
+        let selectedSpace = null;
+    
+        function generarEspacios() {
+            secciones.forEach(seccion => {
+                for (let i = 1; i <= totalSpacesPerSection; i++) {
+                    const space = document.createElement('div');
+                    const espacioId = `${seccion}${i}`;
+                    space.classList.add('parking-space');
+                    space.textContent = espacioId;
+                    space.dataset.spaceId = espacioId;
+    
+                    // Marcar como ocupado si está en la lista
+                    if (ocupados.includes(espacioId)) {
+                        space.classList.add('occupied');
+                        space.setAttribute('data-occupied', 'true');
+                    }
+    
+                    // Agregar evento de clic para seleccionar espacio
+                    space.addEventListener('click', function() {
+                        if (this.getAttribute('data-occupied') === 'true') return; // No seleccionar si está ocupado
+    
+                        // Deseleccionar espacio anterior
+                        if (selectedSpace) {
+                            selectedSpace.classList.remove('selected');
+                        }
+    
+                        // Seleccionar nuevo espacio
+                        this.classList.add('selected');
+                        selectedSpace = this;
+    
+                        // Asignar el valor del espacio seleccionado al campo oculto
+                        document.getElementById('espacioSeleccionado').value = this.dataset.spaceId;
+                    });
+    
+                    parkingLot.appendChild(space);
+                }
+            });
+        }
+    
+        // Llamar la función para generar los espacios
+        generarEspacios();
+    </script>
+</body>
+</html>
